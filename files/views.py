@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from .course import edit_dicom_file, read_dicom_file
-
+from .forms import FileUploadForm
 
 def hello(request):
     return render(request, "files/index.html")
@@ -22,3 +22,16 @@ def read_file(request):
     return render(request, "files/read.html", {
         "props": [f"{key}: {str(getattr(file, key))}" for key in keys]
     })
+
+
+def upload_file2(request):
+    if request.method == 'POST':
+        form = FileUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.cleaned_data.get('file')
+            form.handle_uploaded_file(file)
+            # Дальнейшая обработка загруженного файла
+            return render(request,'files/upload_file.html', {'form': form})
+    else:
+        form = FileUploadForm()
+    return render(request, 'files/upload_file.html', {'form': form})
