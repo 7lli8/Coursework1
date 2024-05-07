@@ -16,6 +16,7 @@ def login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
+
             form.save()
             return redirect('input')
     else:

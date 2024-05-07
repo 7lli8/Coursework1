@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
 
 from .course import edit_dicom_file, read_dicom_file
 from .forms import FileUploadForm
@@ -35,3 +36,4 @@ def upload_file2(request):
     else:
         form = FileUploadForm()
     return render(request, 'files/upload_file.html', {'form': form})
+
