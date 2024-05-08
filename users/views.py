@@ -1,24 +1,31 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LoginForm
+from django.contrib.auth import login
+from .forms import UserCreationForm, UserSignInForm
 
-def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
+
+def signin_view(request):
+    if request.user.is_authenticated:
+        return redirect("")
+    if request.method == "POST":
+        form = UserSignInForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            print(user)
+            login(request, user)
+            return redirect("home")
+    else:
+        form = UserSignInForm()
+    return render(request, "users/login.html", {"form": form})
+
+
+def signup_view(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
             # Здесь вы можете выполнить дополнительные действия после успешной регистрации
-            return redirect('login')
+            return redirect("home")
     else:
-        form = SignUpForm()
-    return render(request, 'users/signup.html', {'form': form})
-
-def login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-
-            form.save()
-            return redirect('input')
-    else:
-        form = LoginForm()
-    return render(request, 'users/login.html', {'form': form})
+        form = UserCreationForm()
+    return render(request, "users/signup.html", {"form": form})

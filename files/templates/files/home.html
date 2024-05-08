@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+    {% if request.user.is_authenticated %}
+        <h1>Welcome, {{ request.user.name }}</h1>
+    {% else %}
+        <h1>Иди и <a href="{% url 'signin' %}">залогинься</a>/<a href="{% url 'signup' %}">зарегайся</a></h1>
+    {% endif %}
+</body>
+</html>
