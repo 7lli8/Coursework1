@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Metameld{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'style.css' %}"/>
+</head>
+
+<body>
+    <div class="navbar">
+        <a href="{% url 'home' %}" class="button">
+            <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.3335 21.266C8.3335 19.0031 8.3335 17.8716 8.79093 16.8771C9.24837 15.8825 10.1074 15.1462 11.8256 13.6735L13.4922 12.2449C16.5978 9.58302 18.1505 8.25208 20.0002 8.25208C21.8498 8.25208 23.4025 9.58302 26.5081 12.2449L28.1747 13.6735C29.8929 15.1462 30.752 15.8825 31.2094 16.8771C31.6668 17.8716 31.6668 19.0031 31.6668 21.266V28.3334C31.6668 31.4761 31.6668 33.0474 30.6905 34.0237C29.7142 35 28.1429 35 25.0002 35H15.0002C11.8575 35 10.2861 35 9.30981 34.0237C8.3335 33.0474 8.3335 31.4761 8.3335 28.3334V21.266Z" stroke="#222222"/>
+                <path d="M24.1668 35V26C24.1668 25.4477 23.7191 25 23.1668 25H16.8335C16.2812 25 15.8335 25.4477 15.8335 26V35" stroke="#222222" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>                
+        </a>
+    </div>
+    {% block content %}
+    {% endblock %}
+</body>
+
+</html>

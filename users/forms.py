@@ -13,6 +13,9 @@ class UserCreationForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ["email", "name"]
+        labels = {
+            "name": "Имя"
+        }
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -39,7 +42,7 @@ class UserChangeForm(forms.ModelForm):
 
 class UserSignInForm(forms.Form):
     email = forms.EmailField(label="Email")
-    password = forms.CharField(label="Password", widget=forms.PasswordInput)
+    password = forms.CharField(label="Пароль", widget=forms.PasswordInput)
 
     def clean(self):
         super().clean()
