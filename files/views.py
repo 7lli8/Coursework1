@@ -1,10 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-
 from .course import edit_dicom_file, read_dicom_file
 from .forms import FileUploadForm
+from .models import UploadFiles
 
 
 def hello(request):
@@ -33,10 +31,10 @@ def upload_file2(request):
     if request.method == "POST":
         form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            file = form.cleaned_data.get("file")
-            form.handle_uploaded_file(file)
+            fp = UploadFiles(file = form.cleaned_data["file"])
+            fp.save()
             # Дальнейшая обработка загруженного файла
-            return render(request, "files/upload_file.html", {"form": form})
+            #return render(request, "files/upload_file.html", {"form": form})
     else:
         form = FileUploadForm()
     return render(request, "files/upload_file.html", {"form": form})
@@ -44,10 +42,3 @@ def upload_file2(request):
 
 def home_view(request):
     return render(request, "files/home.html")
-
-
-#
-# @login_required
-# def user_dashboard_view(request):
-#     # для домашней страницы авторизованных пользователей
-#     return render(request, "files/user_dashboard.html")

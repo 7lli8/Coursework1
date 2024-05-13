@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from .forms import UserCreationForm, UserSignInForm
-from django.contrib.auth import logout
-
 
 def signin_view(request):
     if request.user.is_authenticated:
