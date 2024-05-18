@@ -1,0 +1,43 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    padding: 1em 2em;
+    justify-content: space-between;
+}
+
+.navbar--logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar--logo--brand {
+    padding-left: 0.75em;
+    font-weight: 600;
+    font-size: 30px;
+    color: #000;
+    text-decoration: none;
+}
+
+.navbar--buttons {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 0.75em;
+}
+
+.navbar--buttons--button {
+    padding: 15px 10px;
+    background-color: rgba(153, 162, 171, 0.2);
+    border-radius: 32px;
+    font-weight: 500;
+    color: #000;
+    text-decoration: none;
+}
+
+.navbar--buttons--icon-button {
+    padding: 10px;
+    background-color: rgba(153, 162, 171, 0.2);
+    border-radius: 100%;
+}

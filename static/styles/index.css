@@ -1,0 +1,42 @@
+body {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+.button {
+    padding: 0.5em 5vh;
+    border-radius: 3em;
+    background-color: #000;
+    color: #fff;
+    text-decoration: none;
+    word-break: normal;
+    
+}
+
+.button-large {
+    font-size: 35px;
+    font-weight: 500;
+}
+
+.button-medium {
+    font-size: 25px;
+    font-weight: 400;
+}
+
+.button-small {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.button-outlined {
+    background-color: #fff;
+    border: 1px solid #000;
+    color: #000;
+}
