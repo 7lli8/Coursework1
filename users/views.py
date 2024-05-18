@@ -9,7 +9,6 @@ def signin_view(request):
         form = UserSignInForm(request.POST)
         if form.is_valid():
             user = form.save()
-            print(user)
             login(request, user)
             return redirect("home")
     else:
@@ -33,3 +32,15 @@ def signup_view(request):
 def logout_view(request):
     logout(request)
     return redirect("home")
+
+
+def account_view(request):
+    return render(request, "users/account.html")
+
+
+def contacts_view(request):
+    return render(request, "users/contacts.html")
+
+
+def help_view(request):
+    return render(request, "users/contacts.html")

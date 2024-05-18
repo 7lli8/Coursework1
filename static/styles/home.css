@@ -1,0 +1,27 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: space-between;
+    gap: 5em;
+}
+
+.home-anonymous {
+    margin: 15vh;
+}
+
+.home-authorized {
+    margin: 5vh 10vw;
+}
+
+.home--actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2.5vh;
+    text-align: center;
+    border: 1px solid #000;
+    border-radius: 2em;
+    padding: 5em;
+}
