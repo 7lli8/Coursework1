@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DICOM File Display</title>
+    <!-- Подключаем Bootstrap для стилизации таблицы и стандартные стили CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        /* Опциональные стили для размещения изображения и таблицы */
+        .container {
+            display: flex; /* Используем flexbox для контейнера */
+            flex-direction: row; /* Располагаем элементы в строку */
+        }
+        .image-container {
+            flex: 1; /* Растягиваем контейнер изображения на всю доступную ширину */
+            margin-right: 20px; /* Отступ справа для разделения изображения и таблицы */
+        }
+        .image-container img {
+            max-width: 100%; /* Изображение должно вписываться в контейнер */
+            height: auto;
+        }
+        .table-container {
+            flex: 1; /* Растягиваем контейнер таблицы на всю доступную ширину */
+            overflow-y: auto; /* Добавляем скролл, если таблица больше контейнера */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Контейнер для изображения DICOM -->
+        <div class="image-container">
+            <h2>DICOM Image</h2>
+            <!-- Отображаем изображение DICOM -->
+            <img src="data:image/png;base64,{{ image_base64 }}" class="img-fluid" alt="DICOM Image">
+        </div>
+
+        <!-- Контейнер для таблицы с метаданными DICOM -->
+        <div class="table-container">
+            <h2>DICOM Metadata</h2>
+            {% if tags_html %}
+                {{ tags_html|safe }}
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    Нет доступных данных для отображения.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+
