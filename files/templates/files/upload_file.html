@@ -3,15 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Загрузка</title>
+    <!-- Подключаем Bootstrap для стилизации таблицы -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
-{% block content %}
-  <h2>Загрузить файл</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Загрузить</button>
-  </form>
-{% endblock %}
+    {% block content %}
+    <div class="container">
+        <h2>Загрузить файл</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Загрузить</button>
+        </form>
+
+        <!-- Проверяем, есть ли ошибки -->
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Проверяем, есть ли предупреждения -->
+        {% if warning %}
+        <div class="alert alert-warning" role="alert">
+            {{ warning }}
+        </div>
+        {% endif %}
+
+        <!-- Проверяем, есть ли изображение DICOM и метаданные для отображения -->
+        {% if dicom_image %}
+        <h2>Изображение DICOM</h2>
+        <!-- Отображаем изображение DICOM -->
+        <img src="data:image/png;base64,{{ dicom_image }}" class="img-fluid" alt="DICOM Image">
+        {% endif %}
+
+        {% if dicom_data %}
+        <h2>Данные DICOM</h2>
+        <!-- Отображаем таблицу с данными DICOM -->
+        {{ dicom_data|safe }}
+        {% endif %}
+    </div>
+    {% endblock %}
 </body>
 </html>
