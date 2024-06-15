@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{%load static%}
+{% block title %}Аккаунт{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "styles/account.css" %}"/>
+{% endblock %}
+
+{% block content %}
+<div class="account-container">
+    <div class="account-info">
+        <h1 class="title">Информация</h1>
+        <div class="info-container">
+            <p class="info-label">Email</p>
+            <div class="info-row">
+                <div class="icon-container">
+                    <img src="{% static 'images/email.svg' %}" alt="Email Icon" class="icon">
+                </div>
+                {{ user.email }}
+            </div>
+            <div class="divider"></div>
+        </div>
+        <div class="info-container">
+            <p class="info-label">Имя пользователя</p>
+            <div class="info-row">
+                <div class="icon-container">
+                    <img src="{% static 'images/user.svg' %}" alt="User Icon" class="icon">
+                </div>
+                {{ user.name }}
+            </div>
+            <div class="divider" style="background: #000000; margin-top: 12px;"></div>
+        </div>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Выйти из аккаунта</button> 
+        </form>
+    </div>
+    <div>
+        <h1 class="title">Файлы</h1>
+        <div class="account-grid">
+            <div class="account-grid-item"></div>
+            <div class="account-grid-item"></div>
+            <div class="account-grid-item"></div>
+            <div class="account-grid-item"></div>
+            <div class="account-grid-item"></div>
+            <div class="account-grid-item"></div>
+            <div class="account-grid-item"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

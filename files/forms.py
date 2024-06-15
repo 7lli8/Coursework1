@@ -1,4 +1,5 @@
 from django import forms
+from files.models import CustomFiles
 
 
 class FileUploadForm(forms.Form):
