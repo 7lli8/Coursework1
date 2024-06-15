@@ -1,15 +1,47 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}
-  Авторизация
+{% block title %}Авторизация{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'styles/signup.css' %}">
 {% endblock %}
 
 {% block content %}
-<h2>Регистрация</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Зарегистрироваться</button>
-</form>
+    <div class="container">
+        <h1>Регистрация</h1>
+        <div class="input-group">
+            <p>Email</p>
+            <div class="input-with-icon">
+              <img src="{% static 'images/email.svg' %}" alt="Email Icon">
+              <input type="email" id="email" name="email" placeholder="Введите электронную почту" required>
+            </div>
+            <div class="separator"></div>
+        </div>
+        <div class="input-group">
+            <p>Имя пользователя</p>
+            <div class="input-with-icon">
+              <img src="{% static 'images/user.svg' %}" alt="Account Icon">
+                <input type="text" id="username" name="username" placeholder="Введите имя" required>
+            </div>
+            <div class="separator"></div>
+        </div>
+        <div class="input-group">
+            <p>Пароль</p>
+            <div class="input-with-icon">
+              <img src="{% static 'images/password.svg' %}" alt="Password Icon">
+              <input type="password" id="password" name="password" placeholder="Введите пароль" required>
+            </div>
+            <div class="separator"></div>
+        </div>
+        <div class="input-group">
+          <p>Пароль</p>
+          <div class="input-with-icon">
+            <img src="{% static 'images/password.svg' %}" alt="Password Icon">
+            <input type="password" id="password2" name="password2" placeholder="Повторите пароль" required>
+          </div>
+          <div class="separator"></div>
+      </div>
+    </div>
 {% endblock %}
 

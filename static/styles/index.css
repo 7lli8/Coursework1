@@ -39,4 +39,11 @@ body {
     background-color: #fff;
     border: 1px solid #000;
     color: #000;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Плавное изменение цвета при переходе */
+}
+
+.button-outlined:hover {
+    background-color: #000;
+    border-color: #000;
+    color: #fff;
 }
