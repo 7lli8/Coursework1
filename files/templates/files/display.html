@@ -1,51 +1,116 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DICOM File Display</title>
-    <!-- Подключаем Bootstrap для стилизации таблицы и стандартные стили CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>Отображение DICOM файла</title>
     <style>
-        /* Опциональные стили для размещения изображения и таблицы */
-        .container {
-            display: flex; /* Используем flexbox для контейнера */
-            flex-direction: row; /* Располагаем элементы в строку */
+        /* Стили для контейнера DICOM */
+        .dicom-container {
+            display: flex;  /* Используем Flexbox для распределения элементов */
+            flex-direction: row;  /* Располагаем элементы в строку */
+            justify-content: space-between;  /* Равномерно распределяем пространство между элементами */
+            align-items: flex-start;  /* Выравниваем элементы по верхнему краю */
+            max-width: 1500px;  /* Максимальная ширина контейнера DICOM */
+            margin: 0 auto;  /* Центрируем контейнер по горизонтали */
+            padding: 20px;  /* Добавляем отступы вокруг контейнера */
         }
-        .image-container {
-            flex: 1; /* Растягиваем контейнер изображения на всю доступную ширину */
-            margin-right: 20px; /* Отступ справа для разделения изображения и таблицы */
+
+        /* Стили для блока с изображением DICOM */
+        .dicom-image {
+            max-width: 50%;  /* Максимальная ширина блока с изображением */
+            margin-right: 5px;  /* Отступ справа */
         }
-        .image-container img {
-            max-width: 100%; /* Изображение должно вписываться в контейнер */
-            height: auto;
+
+        /* Стили для блока с таблицей DICOM */
+        .dicom-table {
+            max-width: 45%;  /* Максимальная ширина блока с таблицей */
+            overflow-y: auto;  /* Включаем вертикальную прокрутку при необходимости */
+            max-height: 80vh;  /* Максимальная высота блока (80% высоты видимой области экрана) */
         }
-        .table-container {
-            flex: 1; /* Растягиваем контейнер таблицы на всю доступную ширину */
-            overflow-y: auto; /* Добавляем скролл, если таблица больше контейнера */
+
+        /* Стили для таблицы */
+        table {
+            width: 100%;  /* Ширина таблицы 100% от родительского контейнера */
+            border-collapse: collapse;  /* Схлопываем границы ячеек */
+            margin-bottom: 20px;  /* Отступ снизу таблицы */
+        }
+
+        /* Стили для ячеек таблицы */
+        td {
+            padding: 8px;  /* Внутренний отступ ячеек */
+            border: 1px solid #ddd;  /* Границы ячеек таблицы */
+            text-align: left;  /* Выравнивание текста в ячейках по левому краю */
+        }
+
+        /* Стили для заголовков таблицы */
+        th {
+            padding: 8px;  /* Внутренний отступ заголовков */
+            border: 1px solid #ddd;  /* Границы заголовков таблицы */
+            text-align: left;  /* Выравнивание текста в заголовках по левому краю */
+            background-color: #f2f2f2;  /* Фон заголовков таблицы */
+        }
+
+        /* Стили для кнопки сохранения */
+        .btn-primary {
+            background-color: #007bff;  /* Цвет фона кнопки */
+            color: #fff;  /* Цвет текста кнопки */
+            border: none;  /* Убираем границы кнопки */
+            padding: 10px 20px;  /* Внутренние отступы кнопки */
+            cursor: pointer;  /* Устанавливаем курсор в виде указателя */
+            border-radius: 5px;  /* Скругляем углы кнопки */
+        }
+
+        /* Стили для отзывчивого изображения */
+        .img-fluid {
+            max-width: 100%;  /* Максимальная ширина изображения 100% от родительского контейнера */
+            height: auto;  /* Автоматическая высота изображения */
+            display: block;  /* Блочное отображение изображения */
+            margin-bottom: 20px;  /* Отступ снизу изображения */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Контейнер для изображения DICOM -->
-        <div class="image-container">
-            <h2>DICOM Image</h2>
-            <!-- Отображаем изображение DICOM -->
-            <img src="data:image/png;base64,{{ image_base64 }}" class="img-fluid" alt="DICOM Image">
-        </div>
-
-        <!-- Контейнер для таблицы с метаданными DICOM -->
-        <div class="table-container">
-            <h2>DICOM Metadata</h2>
-            {% if tags_html %}
-                {{ tags_html|safe }}
-            {% else %}
-                <div class="alert alert-warning" role="alert">
-                    Нет доступных данных для отображения.
-                </div>
-            {% endif %}
+        <!-- Основной контейнер -->
+        <div class="dicom-container">
+            <!-- Контейнер для изображения и таблицы DICOM -->
+            <div class="dicom-image">
+                <!-- Блок с изображением DICOM -->
+                {% if image_base64 %}
+                    <!-- Проверка наличия изображения -->
+                    <img src="data:image/png;base64,{{ image_base64 }}" class="img-fluid" alt="DICOM Image">
+                    <!-- Отображение изображения DICOM -->
+                {% else %}
+                    <p>Изображение не доступно.</p>
+                    <!-- Вывод текста, если изображение отсутствует -->
+                {% endif %}
+            </div>
+            <div class="dicom-table">
+                <!-- Блок с таблицей DICOM -->
+                {% if tags_html %}
+                    <form method="post" action="{% url 'save_dicom_file' %}">
+                        <!-- Форма для отправки данных -->
+                        {% csrf_token %}
+                        <!-- CSRF-токен для безопасности -->
+                        {{ tags_html|safe }}
+                        <!-- Вставка HTML содержимого таблицы без экранирования -->
+                        <button type="submit" class="btn btn-primary mt-2">Сохранить изменения</button>
+                        <!-- Кнопка для отправки формы -->
+                    </form>
+                {% else %}
+                    <p>Данные DICOM не доступны.</p>
+                    <!-- Вывод текста, если таблица данных DICOM отсутствует -->
+                {% endif %}
+            </div>
         </div>
     </div>
 </body>
 </html>
+
+
+
+
+
+
 
