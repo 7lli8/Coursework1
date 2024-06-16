@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'styles/home.css' %}"/>
+{% endblock %}
+
+{% block content %}
+    <div class="home home-authorized">
+        <h1>Файл успешно анонимизирован!</h1>
+        <div class="home--actions">
+            <a href="{% url 'download_file' file_id=file_id %}" class="button button-medium" download>Скачать анонимизированный файл</a>
+        </div>
+    </div>
+{% endblock %}

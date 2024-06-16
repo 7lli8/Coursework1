@@ -38,13 +38,9 @@
     <div>
         <h1 class="title">Файлы</h1>
         <div class="account-grid">
-            <div class="account-grid-item"></div>
-            <div class="account-grid-item"></div>
-            <div class="account-grid-item"></div>
-            <div class="account-grid-item"></div>
-            <div class="account-grid-item"></div>
-            <div class="account-grid-item"></div>
-            <div class="account-grid-item"></div>
+            {% for file in files %}
+                <a class="account-grid-item" href="{% url 'download_file' file_id=file.pk %}">{{ file.file_name }}</a>
+            {% endfor %}
         </div>
     </div>
 </div>

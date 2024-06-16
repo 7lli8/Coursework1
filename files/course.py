@@ -1,7 +1,5 @@
 import base64
 import io
-
-import pandas as pd
 import pydicom
 import pydicom as dicom
 from django.core.exceptions import ValidationError
@@ -48,6 +46,8 @@ def handle_file_upload(request):
         raise ValidationError("Неподдерживаемое расширение файла")  # Выброс исключения в случае невалидности формы
 
 
+
+
 #Отображение DICOM файла в формате изображения и таблицы тегов
 def display_dicom_file(file_path):
     """
@@ -81,6 +81,12 @@ def display_dicom_file(file_path):
                     tag_number = f"({elem.tag.group:04x}, {elem.tag.element:04x})"
                     rows += f"<tr><td>{tag_number}</td><td>{elem.description()}</td><td><input type='text' name='{tag_number}' value='{elem.value}' class='form-control'></td></tr>"
 
+            """ 
+            НАДО УБРАТЬ
+            !!!!!!!!!!!!!!!!!!!!!!!
+            """
+
+
             table_html = f"""
             <table class='table table-striped'>
                 <thead>
@@ -102,3 +108,50 @@ def display_dicom_file(file_path):
     except Exception as e:
         print(f"Ошибка при отображении DICOM файла {file_path}: {e}")
         return None, None
+
+
+def anonymization_file(dicom_file):
+    tags = [(0x0010, 0x0010), # patientName - имя пациента
+            (0x0010, 0x0020), # patientID - Id пациента
+            (0x0010, 0x0021), # issuerOfPatientID - организация, выдавшая идентификатор пациента
+            (0x0010, 0x0022), # typeOfPatientID - тип идентификатора пациента
+            (0x0010, 0x0024), # issuerOfPatientIDQualifiersSequence - последовательность квалификаторов идентификатора пациента
+            (0x0010, 0x0030), # patientBirthDate - дата рождения пациента
+            (0x0010, 0x0032), # patientBirthTime - время рождения пациента
+            (0x0010, 0x0033), # patientBirthDateInAlternativeCalendar - дата рождения в альтернативном календаре
+            (0x0010, 0x0034), # patientDeathDateInAlternativeCalendar - дата смерти в альтернативном календаре
+            (0x0010, 0x0040), # patientSex - пол пациента
+            (0x0010, 0x0050), # patientInsurancePlanCodeSequence - страховой план пациента
+            (0x0010, 0x1000), # otherPatientIDs - другие идентификаторы пациента
+            (0x0010, 0x1001), # otherPatientNames - другие имена пациента
+            (0x0010, 0x1002), # otherPatientIDsSequence - последовательность других идентификаторов пациента
+            (0x0010, 0x1005), # patientBirthName - имя при рождении
+            (0x0010, 0x1010), # patientAge - возраст пациента
+            (0x0010, 0x1040), # patientAddress - адрес пациента
+            (0x0010, 0x1050), # insurancePlanIdentification - идентификация страхового плана (устаревший)
+            (0x0010, 0x1060), # patientMotherBirthName - имя матери при рождении
+            (0x0010, 0x1080), # militaryRank - воинское звание
+            (0x0010, 0x1081), # branchOfService - ветвь службы
+            (0x0010, 0x1090), # medicalRecordLocator - локатор медицинской записи
+            (0x0010, 0x1100), # referencedPatientPhotoSequence - ссылка на фотографию пациента
+            (0x0010, 0x2000), # medicalAlerts - медицинские предупреждения
+            (0x0010, 0x2110), # allergies - аллергии
+            (0x0010, 0x2150), # countryOfResidence - страна проживания
+            (0x0010, 0x2152), # regionOfResidence - регион проживания
+            (0x0010, 0x2154), # patientTelephoneNumbers - телефонные номера пациента
+            (0x0010, 0x2155), # patientTelecomInformation - информация о телекоммуникациях пациента
+            (0x0010, 0x2160), # ethnicGroup - этническая группа
+            (0x0010, 0x2180), # occupation - профессия
+            (0x0010, 0x21A0), # smokingStatus - статус курения
+            (0x0010, 0x21B0), # additionalPatientHistory - дополнительная история пациента
+            (0x0010, 0x21F0), # patientReligiousPreference - религиозные предпочтения пациента
+            (0x0010, 0x2295), # breedRegistrationNumber - номер регистрации породы
+            (0x0010, 0x2297), # responsiblePerson - ответственное лицо
+            (0x0010, 0x2299), # responsibleOrganization - ответственная организация
+            (0x0010, 0x4000)] # patientComments - комментарии пациента
+    dicom_file[(0x0010, 0x1030)].value = 0.0 # patientWeight - вес пацана
+    for tag in tags:
+        if tag in dicom_file:
+            dicom_file[tag].value = "Anonymous"
+    return dicom_file
+

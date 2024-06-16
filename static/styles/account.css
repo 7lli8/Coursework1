@@ -46,6 +46,10 @@
     padding: 1em 8em;
     border: 0;
     cursor: pointer;
+}
+
+.logout-button:hover {
+    opacity: 0.5;
     transition: opacity 0.5s;
 }
 
@@ -69,8 +73,16 @@
 .account-grid-item {
     width: 100px;
     height: 100px;
-    background-color: rgba(0,0,0,0.125);
+    background-color: pink;
     border-radius: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    text-decoration: none;
+    word-break: break-all;
+    word-wrap: break-word;
+    text-align: center;
 }
 
 .account-info {

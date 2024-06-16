@@ -11,8 +11,14 @@
         <div class="home home-authorized">
             <h1>Добро пожаловать, {{ request.user.name }}!</h1>
             <div class="home--actions">
-                <a class="button button-outlined button-medium">Загрузить файл для просмотра и редактирования</a>
-                <a class="button button-medium">Обезличить файл</a>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="anonymize-row">
+                        <input type="file" name="file">
+                        <button type="submit" class="button button-medium" formaction="{% url 'upload_file_for_anonymization' %}">Обезличить файл</button>
+                    </div>
+                    <button type="submit" class="button button-medium" formaction="{% url 'upload_file_for_edition' %}">Загрузить файл для просмотра и редактирования</button>
+                </form>
             </div>
         </div>
     {% else %}
@@ -26,3 +32,4 @@
         </div>
     {% endif %}
 {% endblock %}
+

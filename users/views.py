@@ -1,29 +1,19 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from .forms import UserCreationForm, UserSignInForm
+from files.models import CustomFiles
 
-# def signin_view(request):
-#     if request.user.is_authenticated:
-#         return redirect("home")
-#     if request.method == "POST":
-#         form = UserSignInForm(request.POST)
-#         if form.is_valid():
-#             user = form.save()
-#             login(request, user)
-#             return redirect("home")
-#     else:
-#         form = UserSignInForm()
-#     return render(request, "users/login.html", {"form": form})
 
 def signin_view(request):
     if request.user.is_authenticated:
         return redirect("home")
-    
+
     if request.method == "POST":
         form = UserSignInForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
@@ -35,26 +25,29 @@ def signin_view(request):
 
     return render(request, "users/login.html", {"form": form})
 
+
 def signup_view(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            # Здесь вы можете выполнить дополнительные действия после успешной регистрации
             return redirect("home")
     else:
         form = UserCreationForm()
     return render(request, "users/signup.html", {"form": form})
 
 
+@login_required
 def logout_view(request):
     logout(request)
     return redirect("home")
 
 
+@login_required
 def account_view(request):
-    return render(request, "users/account.html")
+    files = CustomFiles.objects.filter(uploaded_by=request.user).all()
+    return render(request, "users/account.html", {"files": files})
 
 
 def contacts_view(request):
