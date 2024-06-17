@@ -1,4 +1,5 @@
 import pydicom
+import re
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -6,12 +7,35 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import File
 from .forms import FileUploadForm
 from .models import CustomFiles
-from files.course import handle_file_upload, display_dicom_file, anonymization_file
+from files.course import handle_file_upload, display_dicom_file, anonymization_file, render_image_base64, read_tags, update_file
 from django.contrib.auth.decorators import login_required
 
 
 def home_view(request):
     return render(request, "files/home.html")
+
+
+@login_required
+def display_file(request, file_id):
+    file = get_object_or_404(CustomFiles.objects.filter(uploaded_by=request.user), pk=file_id)
+    dicom_file = pydicom.dcmread(file.file.path, force=True)
+
+    if request.method == "POST":
+        attributes = {key: value for key, value in request.POST.items() if re.fullmatch(r"\(\d+, \d+\)", key)}
+        dicom_file = update_file(file.file.path, dicom_file, attributes)
+        file.save()
+        file.refresh_from_db()
+    
+    
+    image_base64 = render_image_base64(dicom_file)
+    tags = read_tags(dicom_file)
+
+    return render(
+        request,
+        "files/display.html",
+        {"image_base64": image_base64, "tags": tags, "file_id": file.pk},
+    )
+
 
 
 def upload_file_for_edition(request):
@@ -20,15 +44,7 @@ def upload_file_for_edition(request):
             # Используем функцию для обработки загрузки файла
             fp = handle_file_upload(request)
 
-            # После успешной загрузки, подготовка данных для отображения DICOM - изображение и теги
-            image_base64, tags_html = display_dicom_file(fp.file.path)
-
-            # Перенаправление на страницу отображения DICOM
-            return render(
-                request,
-                "files/display.html",
-                {"image_base64": image_base64, "tags_html": tags_html},
-            )
+            return redirect("display_file", file_id=fp.pk)
         except ValidationError as e:
             messages.error(request, str(e))
     else:
@@ -40,61 +56,6 @@ def upload_file_for_edition(request):
     return render(request, "files/upload_file.html", {"form": form})
 
 
-def display_file(request):
-    try:
-        # Получение последнего загруженного файла текущего пользователя
-        last_uploaded_file = CustomFiles.objects.filter(
-            uploaded_by=request.user
-        ).latest("uploaded_at")
-        file_path = last_uploaded_file.file.path  # Получение пути к файлу
-        image_base64, tags_html = display_dicom_file(
-            file_path
-        )  # Получение изображения и данных DICOM для отображения
-
-        # Рендеринг страницы отображения DICOM файла
-        return render(
-            request,
-            "display.html",
-            {"image_base64": image_base64, "tags_html": tags_html},
-        )
-    except CustomFiles.DoesNotExist:
-
-        # В случае отсутствия загруженных файлов пользователем, возвращаем сообщение об ошибке и перенаправляем на страницу загрузки файла
-        messages.error(request, "Файл не найден или у вас нет загруженных файлов")
-        return redirect("upload_file_for_edition")
-
-
-# Функция для сохранения изменений в файле DICOM.
-def save_dicom_file(request):
-    if request.method == "POST":
-        try:
-            last_uploaded_file = CustomFiles.objects.filter(
-                uploaded_by=request.user
-            ).latest(
-                "uploaded_at"
-            )  # Получение последнего загруженного файла текущего пользователя
-            file_path = last_uploaded_file.file.path  # Получение пути к файлу
-            ds = pydicom.dcmread(file_path, force=True)  # Чтение DICOM файла
-
-            # Обновление значений тегов DICOM
-            for key, value in request.POST.items():
-                if key.startswith("(") and key.endswith(")"):
-                    tag = pydicom.tag.Tag(
-                        key.strip("()").split(",")
-                    )  # Преобразование строки в теги DICOM
-                    if tag in ds:
-                        ds[tag].value = value  # Обновление значения тега
-
-            ds.save_as(file_path)  # Сохранение изменений в файл
-            messages.success(request, "Изменения успешно сохранены.")
-        except Exception as e:
-            messages.error(request, f"Ошибка при сохранении файла DICOM: {e}")
-
-    return redirect(
-        "display_file"
-    )  # Перенаправление на страницу отображения DICOM файла
-
-
 def upload_file_for_anonymization(request):
     if request.method == "POST":  # Проверяем, был ли отправлен POST запрос
         try:
@@ -103,7 +64,7 @@ def upload_file_for_anonymization(request):
             new_file = anonymization_file(pydicom.dcmread(fp.file.path))
             new_file.save_as(fp.file.path)
             fp.refresh_from_db()
-            return render(request, "files/save_file.html", {"file_id": fp.pk})
+            return redirect("display_file", file_id=fp.pk)
         except ValidationError as e:
             messages.error(request, str(e))
     else:

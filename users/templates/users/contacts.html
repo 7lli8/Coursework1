@@ -2,75 +2,26 @@
 {% load static %}
 
 {% block head %}
-    <link rel="stylesheet" href="{% static "styles/home.css" %}"/>
+    <link rel="stylesheet" href="{% static "styles/contacts.css" %}"/>
 {% endblock %}
 
 {% block title %}Контакты{% endblock %}
 
 {% block content %}
-<div
-  style="
-    background: #ffffff;
-    border-radius: 50px;
-    padding: 261px 224px 143px 224px;
-  ">
-  <div
-    style="
-      border-radius: 20px;
-      border: 1px solid #000000;
-      padding: 67px 157px 191px 126px;
-    ">
-    <h1
-      style="
-        font-family: Montserrat;
-        font-size: 30px;
-        font-weight: 500;
-        line-height: 1.25;
-        margin-left: 1px;
-      ">
-      По вопросам технической поддержки обращаться:
-    </h1>
-    <div style="align-items: center; display: flex; margin-top: 96px">
-      <svg
-        width="318"
-        height="40"
-        viewBox="0 0 318 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        style="flex-shrink: 0">
-        <path
-          d="M20 1H298C308.493 1 317 9.50659 317 20C317 30.4934 308.493 39 298 39H20C9.50659 39 1 30.4934 1 20C1 9.50659 9.5066 1 20 1Z"
-          fill="#255272"
-          stroke="#99A2AB"
-          stroke-opacity="0.2" />
-      </svg>
-
-      <svg
-        width="318"
-        height="40"
-        viewBox="0 0 318 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        style="flex-shrink: 0; margin-left: 80px">
-        <path
-          d="M20 1H298C308.493 1 317 9.50659 317 20C317 30.4934 308.493 39 298 39H20C9.50659 39 1 30.4934 1 20C1 9.50659 9.5066 1 20 1Z"
-          fill="#255272"
-          stroke="#99A2AB"
-          stroke-opacity="0.2" />
-      </svg>
+<div class="container">
+  <div class="contact-block">
+    <h1 class="contact-title">По вопросам технической поддержки обращаться:</h1>
+    <div class="support-buttons-container">
+      <div class="support-buttons">
+        <div class="support-button">
+          <p class="support-email">ivbachurina@edu.hse.ru</p>
+        </div>
+        <div class="support-button">
+          <p class="support-email">vvkryuchkova@edu.hse.ru</p>
+        </div>
+      </div>
     </div>
-    <p
-      style="
-        font-family: Montserrat;
-        font-size: 18px;
-        font-weight: 500;
-        line-height: 1.25;
-        margin: 96 0 0 2;
-      ">
-      Режим работы:
-      <br />
-      Пн-пт 10:00 - 18:00
-    </p>
+    <p class="working-hours">Режим работы:<br>Пн-пт 10:00 - 18:00</p>
   </div>
 </div>
 {% endblock %}

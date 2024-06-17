@@ -39,7 +39,7 @@
         <h1 class="title">Файлы</h1>
         <div class="account-grid">
             {% for file in files %}
-                <a class="account-grid-item" href="{% url 'download_file' file_id=file.pk %}">{{ file.file_name }}</a>
+                <a class="account-grid-item" href="{% url 'display_file' file_id=file.pk %}">{{ file.file_name }}</a>
             {% endfor %}
         </div>
     </div>

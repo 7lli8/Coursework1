@@ -1,0 +1,73 @@
+.display-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 100px;
+    padding: 5vh 10vw 1vh 10vw;
+}
+
+.display-image {
+    max-height: 80vh;
+    height: 80%;
+    flex: 1;
+}
+
+.display-table {
+    border-collapse: collapse;
+    display: block;
+    overflow: auto;
+    height: 80vh;
+}
+
+.display-table td, th {
+    border: 1px solid #000;
+}
+
+.display-table thead th {
+    position: sticky;
+    top: 0;
+    background-color:  rgba(153, 162, 171, 0.5);
+}
+
+.display-table thead {
+    width: 100vw;
+}
+
+.display-table tbody td {
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.display-table-wrapper {
+    flex: 1;
+    overflow-x: auto;
+}
+
+.display-table-input {
+    width: 100%;
+    border: none;
+}
+
+.display-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1vh 0;
+}
+
+.display-button {
+    border: none;
+    background-color: #000;
+    border-radius: 15rem;
+    color: #fff;
+    text-decoration: none;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: x-large;
+    padding: 0.5rem;
+    transition: opacity 0.5s;
+}
+
+.display-button:hover {
+    cursor: pointer;
+    opacity: 0.75;
+}

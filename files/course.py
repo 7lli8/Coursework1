@@ -4,9 +4,13 @@ import pydicom
 import pydicom as dicom
 from django.core.exceptions import ValidationError
 from matplotlib import pyplot as plt
+from PIL import Image
 from pydicom.errors import InvalidDicomError
+import pydicom.valuerep
+import pydicom.values
 from files.forms import FileUploadForm
 from files.models import CustomFiles
+from dataclasses import dataclass
 
 
 def read_dicom_file(path_file):  #функция для считывания файла dicom
@@ -46,10 +50,17 @@ def handle_file_upload(request):
         raise ValidationError("Неподдерживаемое расширение файла")  # Выброс исключения в случае невалидности формы
 
 
+@dataclass
+class DicomTag:
+    tag: str
+    name: str
+    value: str | float | int
+    readonly: bool
+    type: str = "text"
 
 
 #Отображение DICOM файла в формате изображения и таблицы тегов
-def display_dicom_file(file_path):
+def display_dicom_file(file_path: str) -> tuple[str, list[DicomTag]]:
     """
     Функция для отображения изображения и метаданных DICOM файла.
 
@@ -62,52 +73,65 @@ def display_dicom_file(file_path):
     try:
         dicom_file = pydicom.dcmread(file_path, force=True)
 
-        if hasattr(dicom_file, 'pixel_array'):
-            image_data = dicom_file.pixel_array
+        image = render_image_base64(dicom_file)
+        tags = read_tags(dicom_file)
 
-            fig, ax = plt.subplots()
-            ax.imshow(image_data, cmap='gray')
-            buf = io.BytesIO()  #создаем буфер для временного хранения графики
-            plt.savefig(buf, format='png')
-            plt.close(fig) #закрываем фигуру - освобождаем память
-            buf.seek(0) # указатель буфера в начало для записи в image_base64
-            image_base64 = base64.b64encode(buf.read()).decode('utf-8')
-
-            # Создаем HTML для редактируемой таблицы
-            rows = ""
-            for elem in dicom_file:
-                # Исключаем тег Pixel Data (7FE0, 0010) из вывода
-                if elem.tag != (0x7FE0, 0x0010) and elem.VR != 'SQ':
-                    tag_number = f"({elem.tag.group:04x}, {elem.tag.element:04x})"
-                    rows += f"<tr><td>{tag_number}</td><td>{elem.description()}</td><td><input type='text' name='{tag_number}' value='{elem.value}' class='form-control'></td></tr>"
-
-            """ 
-            НАДО УБРАТЬ
-            !!!!!!!!!!!!!!!!!!!!!!!
-            """
-
-
-            table_html = f"""
-            <table class='table table-striped'>
-                <thead>
-                    <tr>
-                        <th>Номер тега</th>
-                        <th>Атрибут</th>
-                        <th>Значение</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows}
-                </tbody>
-            </table>
-            """
-
-            return image_base64, table_html
-        else:
-            return None, None
+        return image, tags
     except Exception as e:
         print(f"Ошибка при отображении DICOM файла {file_path}: {e}")
-        return None, None
+        return "", []
+
+
+def render_image_base64(file: pydicom.FileDataset) -> str:
+    image_data = file.pixel_array
+
+    im = Image.fromarray(image_data.astype("uint8"))
+
+    buffer = io.BytesIO()
+    im.save(buffer, "PNG")
+    buffer.seek(0)
+
+    image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+
+    return image_base64
+
+
+def get_dicom_number_types() -> tuple[type]:
+    return (int, float, pydicom.valuerep.DSfloat, pydicom.valuerep.DSdecimal, pydicom.valuerep.ISfloat)
+
+
+def read_tags(file: pydicom.FileDataset) -> list[DicomTag]:
+    tags = []
+    for elem in file:
+        # Исключаем тег Pixel Data (7FE0, 0010) из вывода
+        if elem.tag != (0x7FE0, 0x0010) and elem.VR != 'SQ':
+            tag_number = f"({elem.tag.group:04x}, {elem.tag.element:04x})"
+            tags.append(DicomTag(
+                tag=tag_number,
+                name=elem.description(),
+                value=elem.value,
+                readonly=not isinstance(elem.value, (str, *get_dicom_number_types())),
+                type="number" if isinstance(elem.value, get_dicom_number_types()) else "text",
+            ))
+    return tags
+
+
+def update_file(file_path: str, file: pydicom.FileDataset, attributes: dict[str, str | int | float]) -> pydicom.FileDataset:
+    for tag_name, value in attributes.items():
+        tag = tuple(map(lambda x: int(x, 16), tag_name[1:-1].split(", ")))
+        prev = file[tag].value
+        editable = isinstance(prev, (str, *get_dicom_number_types()))
+        if isinstance(prev, get_dicom_number_types()):
+            if not value.strip():
+                value = 0.0
+            else:
+                value = type(prev)(value)
+        if editable and prev != value and ((abs(prev - value) > 10e-6) if isinstance(prev, float) and isinstance(value, float) else True):
+            file[tag].value = value
+    
+    file.save_as(file_path)
+    return file
+    
 
 
 def anonymization_file(dicom_file):
