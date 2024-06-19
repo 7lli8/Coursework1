@@ -28,4 +28,37 @@
 
 .anonymize-row {
     padding-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.file-input-wrapper {
+    flex: 1;
+}
+
+.file-input {
+    border: 1px dashed #000;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.3s, transform 0.5s;
+}
+
+#file-text {
+    padding: 1rem 0;
+}
+
+.file-input:hover {
+    opacity: 0.75;
+    transform: translateY(-8%);
+}
+
+
+.file-input label {
+    cursor: pointer;
+}
+
+.file-input input[type=file] {
+    display: none;
 }

@@ -17,7 +17,13 @@ body {
     color: #fff;
     text-decoration: none;
     word-break: normal;
-    
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: lightgray;
 }
 
 .button-large {
@@ -39,7 +45,7 @@ body {
     background-color: #fff;
     border: 1px solid #000;
     color: #000;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Плавное изменение цвета при переходе */
+    transition: background-color 0.5s, color 0.5s, border-color 0.5s; /* Плавное изменение цвета при переходе */
 }
 
 .button-outlined:hover {

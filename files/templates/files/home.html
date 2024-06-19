@@ -14,7 +14,16 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="anonymize-row">
-                        <input type="file" name="file">
+                        <div class="file-input-wrapper" ondrop="handleDnd(event)" ondragover="handleDragOver(event)">
+                            <div class="file-input">
+                                <label>
+                                    <input type="file" name="file" accept="*/dicom,.dcm, image/dcm, */dcm, .dicom" id="file-input" onchange="updateFileText(event)">
+                                    <p id="file-text">Выбрать файл</p>
+                                </label>
+                            </div>
+                            
+                            {{ form.file.errors.1 }}
+                        </div>
                         <button type="submit" class="button button-medium" formaction="{% url 'upload_file_for_anonymization' %}">Обезличить файл</button>
                     </div>
                     <button type="submit" class="button button-medium" formaction="{% url 'upload_file_for_edition' %}">Загрузить файл для просмотра и редактирования</button>
@@ -31,5 +40,35 @@
             </div>
         </div>
     {% endif %}
+    <script>
+        const input = document.querySelector('#file-input');
+        const fileText = document.querySelector('#file-text');
+
+        function updateFileText(e) {
+            fileText.innerHTML = input.files.length > 0 ? input.files[0].name : 'Выберите файл';
+        }
+
+        function handleDnd(e) {
+            e.preventDefault();
+            input.files = e.dataTransfer.files;
+            updateFileText(e);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        document.ondragover = document.ondragenter = (e) => {
+            e.preventDefault();
+            fileText.innerHTML = 'Перенесите файл сюда, чтобы загрузить';
+        };
+
+        document.ondragleave = (e) => {
+            e.preventDefault();
+            input.files = (new DataTransfer()).files;
+            updateFileText(e);
+        };
+
+    </script>
 {% endblock %}
 

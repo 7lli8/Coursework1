@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from matplotlib import pyplot as plt
 from PIL import Image
 from pydicom.errors import InvalidDicomError
+import pydicom.errors
 import pydicom.valuerep
 import pydicom.values
 from files.forms import FileUploadForm
@@ -42,10 +43,14 @@ def handle_file_upload(request):
     if form.is_valid():  # Проверка валидности данных формы
         file = request.FILES['file']  # Получение загруженного файла из данных запроса
         uploaded_by = request.user if request.user.is_authenticated else None  # Определение пользователя, загрузившего файл
-        fp = CustomFiles(file=form.cleaned_data["file"], file_name=file.name,
-                         uploaded_by=uploaded_by)  # Создание экземпляра CustomFiles для сохранения в базе данных
-        fp.save()  # Сохранение файла в базе данных
-        return fp
+        try:
+            dicom.dcmread(form.cleaned_data["file"])
+            fp = CustomFiles(file=form.cleaned_data["file"], file_name=file.name,
+                            uploaded_by=uploaded_by)  # Создание экземпляра CustomFiles для сохранения в базе данных
+            fp.save()  # Сохранение файла в базе данных
+            return fp
+        except pydicom.errors.InvalidDicomError:
+            raise ValidationError("Неподдерживаемое расширение файла")
     else:
         raise ValidationError("Неподдерживаемое расширение файла")  # Выброс исключения в случае невалидности формы
 

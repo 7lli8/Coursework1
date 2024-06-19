@@ -39,25 +39,26 @@ def display_file(request, file_id):
 
 
 def upload_file_for_edition(request):
+    form = FileUploadForm()  # Если метод запроса не POST, создаем пустую форму загрузки файлов
+    
     if request.method == "POST":  # Проверяем, был ли отправлен POST запрос
+        form = FileUploadForm(request.POST)
         try:
             # Используем функцию для обработки загрузки файла
             fp = handle_file_upload(request)
 
             return redirect("display_file", file_id=fp.pk)
         except ValidationError as e:
-            messages.error(request, str(e))
-    else:
-        form = (
-            FileUploadForm()
-        )  # Если метод запроса не POST, создаем пустую форму загрузки файлов
+            form.add_error("file", e)
 
     # Рендеринг страницы загрузки файла с формой
-    return render(request, "files/upload_file.html", {"form": form})
+    return render(request, "files/home.html", {"form": form})
 
 
 def upload_file_for_anonymization(request):
+    form = FileUploadForm()
     if request.method == "POST":  # Проверяем, был ли отправлен POST запрос
+        form = FileUploadForm(request.POST)
         try:
             # Используем функцию для обработки загрузки файла
             fp = handle_file_upload(request)
@@ -66,14 +67,10 @@ def upload_file_for_anonymization(request):
             fp.refresh_from_db()
             return redirect("display_file", file_id=fp.pk)
         except ValidationError as e:
-            messages.error(request, str(e))
-    else:
-        form = (
-            FileUploadForm()
-        )  # Если метод запроса не POST, создаем пустую форму загрузки файлов
+            form.add_error("file", e)
 
     # Рендеринг страницы загрузки файла с формой
-    return render(request, "files/upload_file_for_anonymization.html", {"form": form})
+    return render(request, "files/home.html", {"form": form})
 
 
 @login_required
